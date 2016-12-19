@@ -19,29 +19,51 @@ trainColor = {	90 : redLine,
 		100 : blueLine,
 		200 : greenLine,
 }
+
+apiCounter = 0
 while 1:
+	
+	if apiCounter == 0:
+		
+	
+		#time.sleep(60)
+		#print 'Getting Data from TriMet...'
+		reply = requests.get('https://developer.trimet.org/ws/v2/arrivals?appid=755E5C1798BEC31002A57468D&locids=8375&arrivals=1&json=true')
+		sched = json.loads(reply.text)
 
-	time.sleep(60)
+		currtime = time.time()
+		tooearly = currtime+300
+		toolate = currtime+600
+		apiCounter = 60
 
-	reply = requests.get('https://developer.trimet.org/ws/v2/arrivals?appid=755E5C1798BEC31002A57468D&locids=8375&arrivals=1&json=true')
-	sched = json.loads(reply.text)
 
-	currtime = time.time()
-	tooearly = currtime+300
-	toolate = currtime+600
-
+		trainTable = []
+		for train in sched['resultSet']['arrival']:
+			if train['status'] == 'estimated':
+				if (train['estimated']/1000) > tooearly and (train['estimated']/1000) < toolate:
+					#trainColor[train['route']]()
+					routenum = train['route']
+					trainTable.append([routenum,'est','on'])
+			else:
+				
+				if (train['scheduled']/1000) > tooearly and (train['scheduled']/1000) < toolate:
+					routenum = train['route']
+					trainTable.append([routenum,'sched','on'])
+		
 	piglow.clear()
-
-	for train in sched['resultSet']['arrival']:
-		if train['status'] == 'estimated':
-			if (train['estimated']/1000) > tooearly and (train['estimated']/1000) < toolate:
-				#print '{route} at {estimate}'.format(route = train['shortSign'], estimate = time.ctime(float(train['estimated']/1000)))
-				trainColor[train['route']]()
-				#print '{route}'.format(route = train['route'])
+	for color in trainTable:
+		if color[1] == 'est':
+			trainColor[color[0]]()
 		else:
-			print 'Scheduled {line} - {time}'.format(line = train['shortSign'], time = time.ctime(float(train['scheduled']/1000)))
-
+			if color[2] == 'on':
+				trainColor[color[0]]()
+				color[2] = 'off'
+			else:
+				color[2] = 'on'
+	#print 'Next: {table} - new data in {nextcall} second(s).'.format(table = trainTable, nextcall = apiCounter)
 	piglow.show()
+	apiCounter -= 1
+	time.sleep(1)
 
 
 #
