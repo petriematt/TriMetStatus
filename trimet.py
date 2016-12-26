@@ -5,7 +5,7 @@ import piglow
 import os
 import logging
 
-logging.basicConfig(filename='TriPi.log',level=logging.DEBUG)
+#logging.basicConfig(filename='TriPi.log',level=logging.DEBUG)
 
 #os.system("ping -c 10 -i 1 127.0.0.1")
 
