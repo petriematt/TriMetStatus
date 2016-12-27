@@ -11,19 +11,19 @@ import logging
 
 def redLine():
 	logging.debug('Red Line')
-	piglow.red(150)
+	piglow.red(255)
 
 def blueLine():
 	logging.debug('Blue Line')
-	piglow.blue(150)
+	piglow.blue(255)
 
 def greenLine():
 	logging.debug('Green Line')
-	piglow.green(150)
+	piglow.green(255)
 
 def errorStatus():
 	logging.debug('Network Error')
-	piglow.white(150)
+	piglow.white(255)
 	piglow.show()
 
 trainColor = {	90 : redLine,
